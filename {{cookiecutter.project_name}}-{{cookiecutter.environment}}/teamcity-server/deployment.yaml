@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: teamcity-server
+  labels:
+    app: teamcity-server
+    tier: devops
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: teamcity-server
+        tier: devops
+    spec:
+      #Used to specify that this pod should only be deployed on worker nodes
+      nodeSelector:
+        {{cookiecutter.worker_node_label_key}} : {{cookiecutter.worker_node_label_value}}
+      containers:      
+      - image: sjoerdmulder/teamcity:latest
+        name: teamcity
+        imagePullPolicy: IfNotPresent      
+        ports:
+          - containerPort: 8111
+            name: tc-server-http
+        volumeMounts:
+          - name: teamcity-persistent-storage
+            mountPath: /var/lib/teamcity/     
+      volumes:
+          - name: teamcity-persistent-storage
+            persistentVolumeClaim:
+                claimName: teamcityserver-pv-claim

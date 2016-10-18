@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rocketchat-db-pv-claim
+  labels:
+    app: rocketchat
+    tier: devops       
+    volumelabel: data    
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{cookiecutter.rocketchat_container_size}}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rocketchat-db-dump-pv-claim
+  labels:
+    app: rocketchat
+    tier: devops   
+    volumelabel: dump
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{cookiecutter.rocketchat_container_size}}
+  selector:
+      matchLabels:
+        app: "rocketchat"
+        # tier: "devops"
+        # volumelabel: "dump"
+        # type: "local"
+---

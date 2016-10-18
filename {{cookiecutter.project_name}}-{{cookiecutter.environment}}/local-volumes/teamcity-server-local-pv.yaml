@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: teamcityserver-local-pv
+  labels:
+    type: local
+    app: teamcityserver
+    tier: platform
+spec:
+  capacity:
+    storage: {{cookiecutter.teamcity_server_volume_size}}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  hostPath:
+    path: /tmp/pv-teamcityserver
+---

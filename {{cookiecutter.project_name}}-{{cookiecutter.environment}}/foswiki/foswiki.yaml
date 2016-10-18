@@ -1,0 +1,80 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name:  foswiki-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+
+spec:
+  rules:
+  - host: foswiki.atlas.local
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: foswiki-svc
+          servicePort: 80        
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: foswiki-svc
+  labels:
+    app: foswiki
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: foswiki
+    tier: devops
+  clusterIP: None
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: foswiki-pv-claim
+  labels:
+    app: foswiki
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: foswiki
+  labels:
+    app: foswiki
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: foswiki
+        tier: devops
+    spec:
+      containers:
+      - image: foswiki:latest
+        name: foswiki
+        imagePullPolicy: IfNotPresent      
+        ports:
+          - containerPort: 80
+            name: foswiki
+        volumeMounts:
+          - name: foswiki-persistent-storage
+            mountPath: /var/lib/foswiki
+          
+      volumes:
+          - name: foswiki-persistent-storage
+            persistentVolumeClaim:
+                claimName: foswiki-pv-claim
+

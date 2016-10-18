@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name:  rabbitmq-ingress
+
+spec:
+  rules:
+  - host: rabbitmq.{{cookiecutter.stratus_root_domain}}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: rabbitmq
+          servicePort: rmqadmin

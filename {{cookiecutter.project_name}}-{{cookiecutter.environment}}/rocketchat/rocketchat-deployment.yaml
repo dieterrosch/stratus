@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rocketchat
+  labels:
+    app: rocketchat
+    tier: devops
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: rocketchat
+        tier: devops
+    spec:
+      #Used to specify that this pod should only be deployed on worker nodes
+      nodeSelector:
+        {{cookiecutter.worker_node_label_key}} : {{cookiecutter.worker_node_label_value}}      
+      containers:
+      - image: rocketchat/rocket.chat:latest
+        name: rocketchat
+        imagePullPolicy: IfNotPresent
+        env:
+            - name: MONGO_URL
+              value: mongodb://devops-rockchat-mongo:27017/rocketchat
+            - name: ROOT_URL
+              value: http://rocketchat.{{cookiecutter.stratus_root_domain}}
+        ports:
+          - containerPort: 3000
+            name: rchat-http
+          - containerPort: 3001
+            name: rchat-https            

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: tc-agenthttp-local-pv
+  labels:
+    type: local  
+    app: teamcity-agent
+    tier: platform
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  hostPath:
+    path: /tmp/pv-teamcity-agent
+---

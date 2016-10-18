@@ -1,0 +1,12 @@
+{
+    "project_name": "stratus_demo",
+    "contact_email": "phoenix_dev@turfsport.co.za",
+    "worker_node_label_key" : "stackpoint.io/role:",
+    "worker_node_label_value": "worker",
+    "environment": "dev",
+    "stratus_root_domain": "stratus.local",
+    "use_local_volumes": "yes",
+    "rocketchat_container_size": "10Gi",
+    "nexus_volume_size" : "50Gi",
+    "teamcity_server_volume_size" : "10Gi"
+}

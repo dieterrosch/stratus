@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  labels:
+    app: rabbitmq
+    tier: platform
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+        tier: platform
+    spec:      
+{% if cookiecutter.use_local_volumes %}      
+      securityContext:
+        supplementalGroups: [999] #Put root in group 999 (mongodb group)
+{% endif %}
+      #Used to specify that this pod should only be deployed on worker nodes
+      nodeSelector:
+        {{cookiecutter.worker_node_label_key}} : {{cookiecutter.worker_node_label_value}}
+      containers:
+      - image: rabbitmq:3-management
+        name: rabbitmq
+        imagePullPolicy: IfNotPresent
+        
+        volumeMounts:
+          - name: rabbitmq-persistent-storage
+            mountPath: 
+            
+        ports:
+          - containerPort: 15672
+            name: rmqadmin
+            
+{% if cookiecutter.use_local_volumes %}            
+        securityContext:
+          runAsUser: 0 #Needs to run as root on local-volumes
+{% endif %}
+
+      volumes:
+          - name: rabbitmq-persistent-storage
+            persistentVolumeClaim:
+                claimName: rabbitmq-pv-claim
+

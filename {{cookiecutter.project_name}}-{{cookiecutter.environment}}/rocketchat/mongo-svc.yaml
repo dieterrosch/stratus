@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-rockchat-mongo
+  labels:
+    app: rocketchat
+    tier: devops    
+spec:
+  ports:
+    - port: 27017
+      name: mongo
+  selector:
+    app: rocketchat-mongo
+    tier: devops
+    subsystem: mongo
+  clusterIP: None
