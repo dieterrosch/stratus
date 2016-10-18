@@ -1,0 +1,45 @@
+#Once this is deployed,  you need to run:
+#kubectl exec -ti letsencrypt-595800129-3v7qw ./fetch_certs.sh
+#and then
+#kubectl exec -ti letsencrypt-595800129-3v7qw ./save_certs.sh
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: letsencrypt
+  labels:
+    app: letsencrypt
+    tier: platform
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: letsencrypt
+        tier: platform
+    spec:
+      containers:
+      - image: ployst/letsencrypt
+        name: letsencrypt
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: EMAIL
+          value: {{cookiecutter.contact_email}}
+        - name: DOMAINS
+          value: docker.{{cookiecutter.stratus_root_domain}
+        - name: SECRET_NAME
+          value: ssl-for-docker
+        #- name: RC_NAMES
+        #  value: nginx-ssl-proxy-api
+        ports:
+          - containerPort: 80
+            name: http
+        # volumeMounts:
+        #   - name: rabbitmq-persistent-storage
+        #     mountPath: /var/lib/rabbitmq/          
+      # volumes:
+      #     - name: rabbitmq-persistent-storage
+      #       persistentVolumeClaim:
+      #           claimName: rabbitmq-pv-claim
+---
+

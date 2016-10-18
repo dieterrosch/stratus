@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name:  nexus-ingress
+spec:
+  rules:
+  - host: nexus.{{cookiecutter.stratus_root_domain}}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: platform-nexus
+          servicePort: nexus

@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nexus
+  labels:
+    app: nexus
+    tier: platform
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nexus
+        tier: platform
+    spec:
+#{% if cookiecutter.use_local_volumes %}      
+#      securityContext:
+#        supplementalGroups: [999] #Put root in group 999 (nexus group)
+#{% endif %}              
+      #Used to specify that this pod should only be deployed on worker nodes
+      nodeSelector:
+        {{cookiecutter.worker_node_label_key}} : {{cookiecutter.worker_node_label_value}}
+      containers:
+      - image: sonatype/nexus3
+      #- image: dieterrosch/nexus
+        name: nexus
+        imagePullPolicy: IfNotPresent      
+        ports:
+          - containerPort: 8081
+            name: nexus
+        volumeMounts:
+          - name: nexus-persistent-storage
+            mountPath: /nexus-data
+{% if cookiecutter.use_local_volumes %}            
+        securityContext:
+          runAsUser: 0 #Needs to run as root on local-volumes
+{% endif %}            
+      volumes:
+          - name: nexus-persistent-storage
+            persistentVolumeClaim:
+                claimName: nexus-pv-claim

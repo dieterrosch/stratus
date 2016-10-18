@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name:  teamcity-server-ingress
+
+spec:
+  rules:
+  - host: teamcityserver.{{cookiecutter.stratus_root_domain}}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: teamcity-server
+          servicePort: 8111

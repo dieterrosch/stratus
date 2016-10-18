@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: teamcityserver-pv-claim
+  labels:
+    app: teamcity
+    tier: devops  
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{cookiecutter.teamcity_server_volume_size}}
+  selector:
+    matchLabels:
+      type: local
+      app: teamcityserver
+      tier: platform
+

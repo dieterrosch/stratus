@@ -1,0 +1,48 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rocketchat-mongo
+  labels:
+    app: rocketchat
+    tier: devops
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: rocketchat-mongo
+        tier: devops
+        subsystem: mongo
+    spec:
+{% if cookiecutter.use_local_volumes %}      
+      securityContext:
+        supplementalGroups: [999] #Put root in group 999 (mongodb group)
+{% endif %}        
+      #Used to specify that this pod should only be deployed on worker nodes
+      nodeSelector:
+        {{cookiecutter.worker_node_label_key}} : {{cookiecutter.worker_node_label_value}}
+      containers:
+      - image: mongo
+        name: rocketchat-db
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - name: rocketchat-db-persistent-storage
+            mountPath: /data/db
+          - name: rocketchat-db-dump-persistent-storage
+            mountPath: /data/dump
+        ports:
+          - containerPort: 27017
+            name: rcmongo
+{% if cookiecutter.use_local_volumes %}            
+        securityContext:
+          runAsUser: 0 #Needs to run as root on local-volumes
+{% endif %}
+      volumes:
+          - name: rocketchat-db-persistent-storage
+            persistentVolumeClaim:
+                claimName: rocketchat-db-pv-claim
+          - name: rocketchat-db-dump-persistent-storage
+            persistentVolumeClaim:
+                claimName: rocketchat-db-dump-pv-claim
+

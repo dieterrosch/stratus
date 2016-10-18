@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name:  rocketchat-ingress
+
+spec:
+  rules:
+  - host: rocketchat.{{cookiecutter.stratus_root_domain}}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: devops-rockchat
+          servicePort: rchat-http
