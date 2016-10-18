@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: teamcity-agent
+  labels:
+    app: teamcity-agent
+    tier: platform
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: teamcity-agent
+        tier: platform
+    spec:
+      
+      containers:
+      - image: sjoerdmulder/teamcity-agent:latest
+        name: teamcity-agent
+        imagePullPolicy: IfNotPresent        
+        env:
+          - name: TEAMCITY_SERVER
+            value: teamcity-server
+        ports:
+          - containerPort: 9090
+            name: tc-agenthttp            

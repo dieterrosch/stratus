@@ -26,7 +26,7 @@ spec:
         - name: EMAIL
           value: {{cookiecutter.contact_email}}
         - name: DOMAINS
-          value: docker.{{cookiecutter.stratus_root_domain}
+          value: docker.{{cookiecutter.stratus_root_domain}}
         - name: SECRET_NAME
           value: ssl-for-docker
         #- name: RC_NAMES
@@ -34,12 +34,5 @@ spec:
         ports:
           - containerPort: 80
             name: http
-        # volumeMounts:
-        #   - name: rabbitmq-persistent-storage
-        #     mountPath: /var/lib/rabbitmq/          
-      # volumes:
-      #     - name: rabbitmq-persistent-storage
-      #       persistentVolumeClaim:
-      #           claimName: rabbitmq-pv-claim
 ---
 
